@@ -1,3 +1,3 @@
-const app = require("../index.js.js");
+const app = require("../index.js");
 
 module.exports = app;

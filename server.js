@@ -32,3 +32,5 @@ app.use("/api/v1/ZAdmin", require("./routes/admin"));
 app.use(errorHandler);
 
 DBconn(app, port);
+
+module.exports = app;

@@ -16,16 +16,16 @@ const generateTokens = (user) => {
 const setCookies = (res, tokens) => {
   res.cookie("accessToken", tokens.accessToken, {
     httpOnly: true,
-    sameSite: "strict",
-    // secure: true,
+    sameSite: "None",
+    secure: true,
     maxAge: 1 * 60 * 60 * 1000,
   });
 
   res.cookie("refreshToken", tokens.refreshToken, {
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: "None",
     path: "/api/v1/auth/refresh-token",
-    // secure: true,
+    secure: true,
     maxAge: 24 * 60 * 60 * 1000,
   });
 };
@@ -34,15 +34,15 @@ const clearTokens = (res) => {
   res.cookie("accessToken", "", {
     expires: new Date(0),
     httpOnly: true,
-    // secure: true,
-    sameSite: "strict",
+    secure: true,
+    sameSite: "None",
   });
   res.cookie("refreshToken", "", {
     expires: new Date(0),
     httpOnly: true,
     path: "/api/v1/auth/refresh-token",
-    // secure: true,
-    sameSite: "strict",
+    secure: true,
+    sameSite: "None",
   });
 };
 

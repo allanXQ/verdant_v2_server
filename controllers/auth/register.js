@@ -36,12 +36,12 @@ const Register = async (req, res) => {
     authMethod: "local",
   });
   //redirect to login page with message
-  const message = Messages.userCreatedSuccessfully;
-  return res.redirect(
-    301,
-    `${process.env.CLIENT_URL}/login?message=${encodeURIComponent(message)}`
-  );
-  // return res.status(200).json({ message: Messages.userCreatedSuccessfully });
+  // const message = Messages.userCreatedSuccessfully;
+  // return res.redirect(
+  //   301,
+  //   `${process.env.CLIENT_URL}/login?message=${encodeURIComponent(message)}`
+  // );
+  return res.status(200).json({ message: Messages.userCreatedSuccessfully });
 };
 
 module.exports = { Register };

@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/errorHandler");
 const DBconn = require("./config/dbConn");
+const axios = require("axios");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -31,6 +32,20 @@ app.use("/api/v1/ZAdmin", require("./routes/admin"));
 
 app.use(errorHandler);
 
-DBconn(app, port);
+const pingInterval = 840000; // 14 minutes in milliseconds
 
-module.exports = app;
+function pingSelf() {
+  axios
+    .get("https://hive-server.onrender.com/api/v1/user/user-info")
+    .then((response) => {
+      console.log("Service pinged successfully:", response.status);
+    })
+    .catch((error) => {
+      console.error("Error pinging service:", error);
+    });
+}
+
+// Set up the interval to ping your service every 14 minutes
+setInterval(pingSelf, pingInterval);
+
+DBconn(app, port);

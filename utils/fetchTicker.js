@@ -17,6 +17,7 @@ const fetchTickerData = async (assetName) => {
       priceChange,
     };
   } catch (err) {
+    console.log(err);
     throw new Error(err.message);
   }
 };

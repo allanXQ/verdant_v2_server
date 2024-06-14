@@ -1,33 +1,47 @@
 const mongoose = require("mongoose");
-
 const { roles } = require("../config");
 
-const isLocalAuth = function () {
-  return this.authMethod === "local";
-};
+const Schema = mongoose.Schema;
 
-const Portfolio = mongoose.Schema({
+// Portfolio sub-schema
+const PortfolioSchema = new Schema({
   ownerId: { type: String, required: true },
   assetName: { type: String, required: true },
   amount: { type: Number, required: true },
 });
 
-const Referrals = mongoose.Schema({
+// Referrals sub-schema
+const ReferralSchema = new Schema({
   userId: { type: String, required: true },
   username: { type: String, required: true },
 });
 
-//add kyc
-const Users = mongoose.Schema(
+// Users schema
+const UserSchema = new Schema(
   {
     userId: { type: String },
     role: { type: String, default: roles.user },
     firstname: { type: String },
     lastname: { type: String },
-    googleName: { type: String, required: !isLocalAuth },
-    username: { type: String, required: isLocalAuth, unique: true },
+    googleName: {
+      type: String,
+      required: function () {
+        return this.authMethod !== "local";
+      },
+    },
+    username: {
+      type: String,
+      required: function () {
+        return this.authMethod === "local";
+      },
+    },
     email: { type: String, required: true, unique: true },
-    phone: { type: Number, required: isLocalAuth, unique: true },
+    phone: {
+      type: String,
+      required: function () {
+        return this.authMethod === "local";
+      },
+    },
     accountBalance: { type: Number, default: 0 },
     authMethod: {
       type: String,
@@ -38,15 +52,28 @@ const Users = mongoose.Schema(
     referrer: { type: String, default: "none" },
     refreshToken: { type: String },
     passwordResetToken: { type: String },
-    password: { type: String, required: isLocalAuth },
-    portfolio: [Portfolio],
-    referrals: [Referrals],
+    password: {
+      type: String,
+      required: function () {
+        return this.authMethod === "local";
+      },
+    },
+    portfolio: [PortfolioSchema],
+    referrals: [ReferralSchema],
   },
   {
     timestamps: true,
   }
 );
 
-const model = mongoose.model("Users", Users);
+UserSchema.index(
+  { username: 1 },
+  { unique: true, partialFilterExpression: { username: { $ne: null } } }
+);
+UserSchema.index(
+  { phone: 1 },
+  { unique: true, partialFilterExpression: { phone: { $ne: null } } }
+);
 
-module.exports = model;
+const User = mongoose.model("User", UserSchema);
+module.exports = User;
